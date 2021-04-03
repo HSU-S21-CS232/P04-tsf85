@@ -302,15 +302,15 @@ while running:
             score_value += 1
             
             if score_value == 1:
-                spawnBoss()
+                spawnElites()
                 
-            elif score_value == 10:
+            elif score_value == 2:
                 spawnElites()
             
-            elif score_value == 12:
+            elif score_value == 3:
                 upgrade()
 
-            elif score_value == 15:
+            elif score_value == 4:
                 spawnBoss()
             
             enemyX[i] = random.randint(0, 736)
@@ -407,16 +407,16 @@ while running:
                 score_value += 1
                 elitesX[i] = random.randint(0, 736)
                 elitesY[i] = random.randint(50, 150)
-                if score_value == 5:
+                if score_value == 1:
                     spawnElites()
                 
-                elif score_value == 10:
+                elif score_value == 2:
                     spawnElites()
             
-                elif score_value == 12:
+                elif score_value == 3:
                     upgrade()
 
-                elif score_value == 15:
+                elif score_value == 4:
                     spawnBoss()
             
         elites(elitesX[i], elitesY[i], i)
@@ -518,7 +518,7 @@ while running:
             boss_current_hits[i] += 1
             print(boss_current_hits)
             
-            while boss_current_hits[i] == 5:
+            if boss_current_hits[i] == 5:
                 victory_text()
                 
                 break                
