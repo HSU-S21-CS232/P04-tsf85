@@ -22,6 +22,14 @@ pygame.display.set_caption("Space Invader")
 icon = pygame.image.load('ufo.png')
 pygame.display.set_icon(icon)
 
+#Score
+score_value = 0
+
+font = pygame.font.Font('freesansbold.ttf', 32)
+
+textX = 10
+testY = 10
+
 # Player
 playerImg = pygame.image.load('player.png')
 playerX = 370
@@ -43,6 +51,17 @@ for i in range(num_of_enemies):
     enemyX_change.append(4)
     enemyY_change.append(40)
 
+# Elites
+elitesImg = []
+elitesX = []
+elitesY = []
+elitesX_change = []
+elitesY_change = []
+elites_current_hits = []
+
+num_of_elites = 2
+
+
 # Bullet
 
 # Ready - You can't see the bullet on the screen
@@ -55,13 +74,6 @@ bulletX_change = 0
 bulletY_change = 10
 bullet_state = "ready"
 
-# Score
-
-score_value = 0
-font = pygame.font.Font('freesansbold.ttf', 32)
-
-textX = 10
-testY = 10
 
 # Game Over
 over_font = pygame.font.Font('freesansbold.ttf', 64)
@@ -83,6 +95,21 @@ def player(x, y):
 
 def enemy(x, y, i):
     screen.blit(enemyImg[i], (x, y))
+
+def elites(x, y, i):
+    screen.blit(elitesImg[i], (x, y))
+
+def spawnElites():
+    global num_of_elites
+    num_of_elites+=1
+
+    for i in range(num_of_elites):
+        elites_current_hits.append(0)
+        elitesImg.append(pygame.image.load('elites.png'))
+        elitesX.append(random.randint(0, 736))
+        elitesY.append(random.randint(50, 150))
+        elitesX_change.append(4)
+        elitesY_change.append(40)
 
 
 def fire_bullet(x, y):
@@ -164,10 +191,56 @@ while running:
             bulletY = 480
             bullet_state = "ready"
             score_value += 1
+            
+            if score_value == 3:
+                spawnElites()
+            elif score_value == 6:
+                spawnElites()
+            
             enemyX[i] = random.randint(0, 736)
             enemyY[i] = random.randint(50, 150)
 
         enemy(enemyX[i], enemyY[i], i)
+
+    # elites Movement
+    for i in range(num_of_elites):
+
+        # Game Over
+        if elitesY[i] > 440:
+            for j in range(num_of_elites):
+                elitesY[j] = 2000
+            game_over_text()
+            break
+
+        elitesX[i] += elitesX_change[i]
+        if elitesX[i] <= 0:
+            elitesX_change[i] = 4
+            elitesY[i] += elitesY_change[i]
+        elif elitesX[i] >= 736:
+            elitesX_change[i] = -4
+            elitesY[i] += elitesY_change[i]
+
+        # Collision
+        collision = isCollision(elitesX[i], elitesY[i], bulletX, bulletY)
+        if collision:
+            explosionSound = mixer.Sound("explosion.wav")
+            explosionSound.play()
+            bulletY = 480
+            bullet_state = "ready"
+            elites_current_hits[i] += 1
+            if elites_current_hits == 2:
+
+                score_value += 1
+                elitesX[i] = random.randint(0, 736)
+                elitesY[i] = random.randint(50, 150)
+                if score_value == 3:
+                    spawnElites()
+                elif score_value == 6:
+                    spawnElites()
+            
+            
+
+        elites(elitesX[i], elitesY[i], i)
 
     # Bullet Movement
     if bulletY <= 0:
