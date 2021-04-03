@@ -1,6 +1,6 @@
 import math
 import random
-
+import time
 import pygame
 from pygame import mixer
 
@@ -42,7 +42,7 @@ enemyX = []
 enemyY = []
 enemyX_change = []
 enemyY_change = []
-num_of_enemies = 6
+num_of_enemies = 3
 
 for i in range(num_of_enemies):
     enemyImg.append(pygame.image.load('enemy.png'))
@@ -60,6 +60,16 @@ elitesY_change = []
 elites_current_hits = []
 
 num_of_elites = 0
+
+#Boss
+bossImg = []
+bossX = []
+bossY = []
+bossX_change = []
+bossY_change = []
+boss_current_hits = []
+
+num_of_boss = 0
 
 
 # Bullet
@@ -95,6 +105,9 @@ upgraded_bullet3Y_change = 10
 # Game Over
 over_font = pygame.font.Font('freesansbold.ttf', 64)
 
+# Victroy
+victory_font = pygame.font.Font('freesansbold.ttf', 64)
+
 
 def show_score(x, y):
     score = font.render("Score : " + str(score_value), True, (255, 255, 255))
@@ -105,6 +118,16 @@ def game_over_text():
     over_text = over_font.render("GAME OVER", True, (255, 255, 255))
     screen.blit(over_text, (200, 250))
 
+def victory_text():
+    for j in range(num_of_enemies):
+        enemyX_change[j] = 0
+    for j in range(num_of_elites):
+        elitesX_change[j] = 0
+    for j in range(num_of_boss):
+        bossX_change[j] = 0
+    vic_text = victory_font.render("YOU WIN", True, (255, 255, 255))
+    screen.blit(vic_text, (200, 250))
+    
 
 def player(x, y):
     screen.blit(playerImg, (x, y))
@@ -116,6 +139,9 @@ def enemy(x, y, i):
 def elites(x, y, i):
     screen.blit(elitesImg[i], (x, y))
 
+def boss(x, y, i):
+    screen.blit(bossImg[i], (x, y))
+
 def spawnElites():
     global num_of_elites
     num_of_elites+=1
@@ -126,6 +152,17 @@ def spawnElites():
     elitesX_change.append(4)
     elitesY_change.append(40)
     elites_current_hits.append(0)
+
+def spawnBoss():
+    global num_of_boss
+    num_of_boss+=1
+   
+    bossImg.append(pygame.image.load('boss.png'))
+    bossX.append(random.randint(0, 736))
+    bossY.append(random.randint(50, 150))
+    bossX_change.append(4)
+    bossY_change.append(40)
+    boss_current_hits.append(0)
 
 
 def fire_bullet(x, y):
@@ -156,16 +193,18 @@ def isCollision3(enemyX, enemyY, upgraded_bullet3X, upgraded_bullet3Y):
         return False
     
 
-bullet_upgrade = True
+bullet_upgrade = False
 
 def upgrade():
-    random_upgrade = 0
-    random_upgrade.append(random.randint(1, 3))
-    if random_upgrade == 1:
-        bullet_upgrade.append(True)
+    global bullet_upgrade
+    bullet_upgrade = True
 
 
-            
+
+def message_display(x, y):
+    score = font.render("Weapon Upgrade!", True, (255, 255, 255))
+    screen.blit(score, (x, y))
+
 def multi_bullet(x, y, x2, y2, x3, y3):
     global bullet_state
     bullet_state = "fire"
@@ -230,11 +269,26 @@ while running:
 
         enemyX[i] += enemyX_change[i]
         if enemyX[i] <= 0:
-            enemyX_change[i] = 4
-            enemyY[i] += enemyY_change[i]
+            if score_value < 5:
+                enemyX_change[i] = 4
+                enemyY[i] += enemyY_change[i]
+            elif score_value < 10:
+                enemyX_change[i] = 5
+                enemyY[i] += enemyY_change[i]
+            elif score_value >= 10:
+                enemyX_change[i] = 6
+                enemyY[i] += enemyY_change[i]
+
         elif enemyX[i] >= 736:
-            enemyX_change[i] = -4
-            enemyY[i] += enemyY_change[i]
+            if score_value < 5:
+                enemyX_change[i] = -4
+                enemyY[i] += enemyY_change[i]
+            elif score_value < 10:
+                enemyX_change[i] = -5
+                enemyY[i] += enemyY_change[i]
+            elif score_value >= 10:
+                enemyX_change[i] = -6
+                enemyY[i] += enemyY_change[i]
 
         # Collision
         collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
@@ -247,14 +301,17 @@ while running:
             bullet_state = "ready"
             score_value += 1
             
-            if score_value == 10:
-                spawnElites()
+            if score_value == 1:
+                spawnBoss()
                 
-            elif score_value == 20:
+            elif score_value == 10:
                 spawnElites()
+            
+            elif score_value == 12:
+                upgrade()
 
-            elif score_value == 30:
-                spawnElites()
+            elif score_value == 15:
+                spawnBoss()
             
             enemyX[i] = random.randint(0, 736)
             enemyY[i] = random.randint(50, 150)
@@ -271,14 +328,17 @@ while running:
             bullet_state = "ready"
             score_value += 1
             
-            if score_value == 10:
+            if score_value == 5:
                 spawnElites()
                 
-            elif score_value == 20:
+            elif score_value == 10:
                 spawnElites()
+            
+            elif score_value == 12:
+                upgrade()
 
-            elif score_value == 30:
-                spawnElites()
+            elif score_value == 15:
+                spawnBoss()
             
             enemyX[i] = random.randint(0, 736)
             enemyY[i] = random.randint(50, 150)
@@ -295,14 +355,17 @@ while running:
             bullet_state = "ready"
             score_value += 1
             
-            if score_value == 10:
+            if score_value == 5:
                 spawnElites()
                 
-            elif score_value == 20:
+            elif score_value == 10:
                 spawnElites()
+            
+            elif score_value == 12:
+                upgrade()
 
-            elif score_value == 30:
-                spawnElites()
+            elif score_value == 15:
+                spawnBoss()
             
             enemyX[i] = random.randint(0, 736)
             enemyY[i] = random.randint(50, 150)
@@ -316,6 +379,7 @@ while running:
         if elitesY[i] > 440:
             for j in range(num_of_elites):
                 elitesY[j] = 2000
+                
             game_over_text()
             break
 
@@ -343,18 +407,21 @@ while running:
                 score_value += 1
                 elitesX[i] = random.randint(0, 736)
                 elitesY[i] = random.randint(50, 150)
-                if score_value == 10:
+                if score_value == 5:
                     spawnElites()
                 
-                elif score_value == 20:
+                elif score_value == 10:
                     spawnElites()
+            
+                elif score_value == 12:
+                    upgrade()
 
-                elif score_value == 30:
-                    spawnElites()
+                elif score_value == 15:
+                    spawnBoss()
             
         elites(elitesX[i], elitesY[i], i)
 
-        collision2 = isCollision2(enemyX[i], enemyY[i], upgraded_bullet2X, upgraded_bullet2Y)
+        collision2 = isCollision2(elitesX[i], elitesY[i], upgraded_bullet2X, upgraded_bullet2Y)
         if collision2:
             explosionSound = mixer.Sound("explosion.wav")
             explosionSound.play()
@@ -362,23 +429,32 @@ while running:
             upgraded_bullet2Y = 480
             upgraded_bullet3Y = 480
             bullet_state = "ready"
-            score_value += 1
+            elites_current_hits[i] += 1
+            print(elites_current_hits)
+            if elites_current_hits[i] == 2:
+                elites_current_hits[i] = 0
+                score_value += 1
+                elitesX[i] = random.randint(0, 736)
+                elitesY[i] = random.randint(50, 150)
             
-            if score_value == 10:
+            if score_value == 5:
                 spawnElites()
                 
-            elif score_value == 20:
+            elif score_value == 10:
                 spawnElites()
+            
+            elif score_value == 12:
+                upgrade()
 
-            elif score_value == 30:
-                spawnElites()
+            elif score_value == 15:
+                spawnBoss()
             
             enemyX[i] = random.randint(0, 736)
             enemyY[i] = random.randint(50, 150)
 
-        enemy(enemyX[i], enemyY[i], i)
+        elites(elitesX[i], elitesY[i], i)
 
-        collision3 = isCollision3(enemyX[i], enemyY[i], upgraded_bullet3X, upgraded_bullet3Y)
+        collision3 = isCollision3(elitesX[i], elitesY[i], upgraded_bullet3X, upgraded_bullet3Y)
         if collision3:
             explosionSound = mixer.Sound("explosion.wav")
             explosionSound.play()
@@ -386,21 +462,108 @@ while running:
             upgraded_bullet2Y = 480
             upgraded_bullet3Y = 480
             bullet_state = "ready"
-            score_value += 1
+            elites_current_hits[i] += 1
+            print(elites_current_hits)
+            if elites_current_hits[i] == 2:
+                elites_current_hits[i] = 0
+                score_value += 1
+                elitesX[i] = random.randint(0, 736)
+                elitesY[i] = random.randint(50, 150)
             
-            if score_value == 10:
+            if score_value == 5:
                 spawnElites()
                 
-            elif score_value == 20:
+            elif score_value == 10:
                 spawnElites()
+            
+            elif score_value == 12:
+                upgrade()
 
-            elif score_value == 30:
-                spawnElites()
+            elif score_value == 15:
+                spawnBoss()
             
             enemyX[i] = random.randint(0, 736)
             enemyY[i] = random.randint(50, 150)
 
-        enemy(enemyX[i], enemyY[i], i)
+        elites(elitesX[i], elitesY[i], i)
+
+    # boss Movement
+    for i in range(num_of_boss):
+
+        # Game Over
+        if bossY[i] > 440:
+            for j in range(num_of_boss):
+                bossY[j] = 2000
+                
+            game_over_text()
+            break
+
+        bossX[i] += bossX_change[i]
+        if bossX[i] <= 0:
+            bossX_change[i] = 4
+            bossY[i] += bossY_change[i]
+        elif bossX[i] >= 736:
+            bossX_change[i] = -4
+            bossY[i] += bossY_change[i]
+
+        # Collision
+        collision = isCollision(bossX[i], bossY[i], bulletX, bulletY)
+        if collision:
+            explosionSound = mixer.Sound("explosion.wav")
+            explosionSound.play()
+            bulletY = 480
+            upgraded_bullet2Y = 480
+            upgraded_bullet3Y = 480
+            bullet_state = "ready"
+            boss_current_hits[i] += 1
+            print(boss_current_hits)
+            
+            while boss_current_hits[i] == 5:
+                victory_text()
+                
+                break                
+                
+            
+        boss(bossX[i], bossY[i], i)
+
+        collision2 = isCollision2(bossX[i], bossY[i], upgraded_bullet2X, upgraded_bullet2Y)
+        if collision2:
+            explosionSound = mixer.Sound("explosion.wav")
+            explosionSound.play()
+            bulletY = 480
+            upgraded_bullet2Y = 480
+            upgraded_bullet3Y = 480
+            bullet_state = "ready"
+            boss_current_hits[i] += 1
+            print(boss_current_hits)
+            if boss_current_hits[i] == 5:
+                victory_text()
+                break
+
+            
+            enemyX[i] = random.randint(0, 736)
+            enemyY[i] = random.randint(50, 150)
+
+        boss(bossX[i], bossY[i], i)
+
+        collision3 = isCollision3(bossX[i], bossY[i], upgraded_bullet3X, upgraded_bullet3Y)
+        if collision3:
+            explosionSound = mixer.Sound("explosion.wav")
+            explosionSound.play()
+            bulletY = 480
+            upgraded_bullet2Y = 480
+            upgraded_bullet3Y = 480
+            bullet_state = "ready"
+            boss_current_hits[i] += 1
+            print(boss_current_hits)
+            if boss_current_hits[i] == 5:
+                victory_text()
+                break
+
+            
+            
+
+        boss(bossX[i], bossY[i], i)
 
     # Bullet Movement
     if bulletY <= 0:
