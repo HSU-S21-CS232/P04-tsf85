@@ -59,7 +59,7 @@ elitesX_change = []
 elitesY_change = []
 elites_current_hits = []
 
-num_of_elites = 2
+num_of_elites = 0
 
 
 # Bullet
@@ -102,14 +102,13 @@ def elites(x, y, i):
 def spawnElites():
     global num_of_elites
     num_of_elites+=1
-
-    for i in range(num_of_elites):
-        elites_current_hits.append(0)
-        elitesImg.append(pygame.image.load('elites.png'))
-        elitesX.append(random.randint(0, 736))
-        elitesY.append(random.randint(50, 150))
-        elitesX_change.append(4)
-        elitesY_change.append(40)
+   
+    elitesImg.append(pygame.image.load('elites.png'))
+    elitesX.append(random.randint(0, 736))
+    elitesY.append(random.randint(50, 150))
+    elitesX_change.append(4)
+    elitesY_change.append(40)
+    elites_current_hits.append(0)
 
 
 def fire_bullet(x, y):
@@ -194,6 +193,7 @@ while running:
             
             if score_value == 3:
                 spawnElites()
+                print(elites_current_hits)
             elif score_value == 6:
                 spawnElites()
             
@@ -228,8 +228,9 @@ while running:
             bulletY = 480
             bullet_state = "ready"
             elites_current_hits[i] += 1
-            if elites_current_hits == 2:
-
+            print(elites_current_hits)
+            if elites_current_hits[i] == 2:
+                elites_current_hits[i] = 0
                 score_value += 1
                 elitesX[i] = random.randint(0, 736)
                 elitesY[i] = random.randint(50, 150)
