@@ -1,0 +1,25 @@
+I started off the first week of the project trying to come with with something original.
+Everything I came up with ended up being a bit out of my league, at least time-wise, so
+I ended up caving and going for the space invader alterations. After feeling pretty solid
+with everything from the tutorial visit I started modding. The changes I made were to add
+elite enemies that take two hits to kill that have their numbers increased at different 
+score values. The speed of enemies will also increase at different score values. then I 
+added a weapon upgrade just a little before the score will trigger a boss to spawn that
+takes 5 hits to kill, winning the game and pausing the enemy movement.
+
+a particular struggle was getting the elite enemies to take more than one hit to kill. Everything
+was running fine, but the elite enemies had become immortal and I was going a bit crazy
+trying different things to make it work... I had simply forgotten a pair of brackets somewhere.
+
+An issue I was unable to resolve was something I had written off as something easy that
+I could pretty much copy and paste in. I couldn't get the "You Win" text to appear on the 
+screen for more than a flash even though, as far as I can tell, it should have been roughly
+the same as the gameover function. So the game just kind of awkwardly ends with the enemies
+frozen on the screen.
+
+The whole thing was fun. Really shows that making games is possible... if not very hard.
+
+
+https://github.com/HSU-S21-CS232/P04-tsf85/blob/main/P04-tsf85.gif
+I had all the score unlock sped way up in this so the version on github takes a bit higher
+score to progress.
