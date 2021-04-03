@@ -74,6 +74,23 @@ bulletX_change = 0
 bulletY_change = 10
 bullet_state = "ready"
 
+upgraded_bulletImg = pygame.image.load('bullet.png')
+upgraded_bullet2Img = pygame.image.load('bullet.png')
+upgraded_bullet3Img = pygame.image.load('bullet.png')
+upgraded_bulletX = 0
+upgraded_bullet2X = 0
+upgraded_bullet3X = 0
+upgraded_bulletY = 480
+upgraded_bullet2Y = 480
+upgraded_bullet3Y = 480
+upgraded_bulletX_change = 0
+upgraded_bullet2X_change = 0
+upgraded_bullet3X_change = 0
+upgraded_bulletY_change = 10
+upgraded_bullet2Y_change = 10
+upgraded_bullet3Y_change = 10
+
+
 
 # Game Over
 over_font = pygame.font.Font('freesansbold.ttf', 64)
@@ -116,14 +133,45 @@ def fire_bullet(x, y):
     bullet_state = "fire"
     screen.blit(bulletImg, (x + 16, y + 10))
 
-
 def isCollision(enemyX, enemyY, bulletX, bulletY):
     distance = math.sqrt(math.pow(enemyX - bulletX, 2) + (math.pow(enemyY - bulletY, 2)))
-    if distance < 27:
+    if (distance < 27):
+        return True
+    else:
+        return False
+   
+
+def isCollision2(enemyX, enemyY, upgraded_bullet2X, upgraded_bullet2Y):
+    distance2 = math.sqrt(math.pow(enemyX - (upgraded_bullet2X - 16), 2) + (math.pow(enemyY - (upgraded_bullet2Y + 25), 2)))
+    if (distance2 < 27):
         return True
     else:
         return False
 
+def isCollision3(enemyX, enemyY, upgraded_bullet3X, upgraded_bullet3Y):
+    distance3 = math.sqrt(math.pow(enemyX - (upgraded_bullet3X + 48), 2) + (math.pow(enemyY - (upgraded_bullet3Y + 25), 2)))
+    if (distance3 < 27):
+        return True
+    else:
+        return False
+    
+
+bullet_upgrade = True
+
+def upgrade():
+    random_upgrade = 0
+    random_upgrade.append(random.randint(1, 3))
+    if random_upgrade == 1:
+        bullet_upgrade.append(True)
+
+
+            
+def multi_bullet(x, y, x2, y2, x3, y3):
+    global bullet_state
+    bullet_state = "fire"
+    screen.blit(bulletImg, (x + 16, y + 10))
+    screen.blit(upgraded_bullet2Img, (x2 - 16, y2 + 25))
+    screen.blit(upgraded_bullet3Img, (x3 + 48, y3 + 25))
 
 # Game Loop
 running = True
@@ -149,7 +197,13 @@ while running:
                     bulletSound.play()
                     # Get the current x cordinate of the spaceship
                     bulletX = playerX
-                    fire_bullet(bulletX, bulletY)
+                    upgraded_bullet2X = playerX
+                    upgraded_bullet3X = playerX
+                    
+                    if bullet_upgrade == True:
+                        multi_bullet(bulletX, bulletY, upgraded_bullet2X, upgraded_bullet2Y, upgraded_bullet3X, upgraded_bullet3Y)
+                    else:    
+                        fire_bullet(bulletX, bulletY)
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -188,13 +242,66 @@ while running:
             explosionSound = mixer.Sound("explosion.wav")
             explosionSound.play()
             bulletY = 480
+            upgraded_bullet2Y = 480
+            upgraded_bullet3Y = 480
             bullet_state = "ready"
             score_value += 1
             
-            if score_value == 3:
+            if score_value == 10:
                 spawnElites()
-                print(elites_current_hits)
-            elif score_value == 6:
+                
+            elif score_value == 20:
+                spawnElites()
+
+            elif score_value == 30:
+                spawnElites()
+            
+            enemyX[i] = random.randint(0, 736)
+            enemyY[i] = random.randint(50, 150)
+
+        enemy(enemyX[i], enemyY[i], i)
+
+        collision2 = isCollision2(enemyX[i], enemyY[i], upgraded_bullet2X, upgraded_bullet2Y)
+        if collision2:
+            explosionSound = mixer.Sound("explosion.wav")
+            explosionSound.play()
+            bulletY = 480
+            upgraded_bullet2Y = 480
+            upgraded_bullet3Y = 480
+            bullet_state = "ready"
+            score_value += 1
+            
+            if score_value == 10:
+                spawnElites()
+                
+            elif score_value == 20:
+                spawnElites()
+
+            elif score_value == 30:
+                spawnElites()
+            
+            enemyX[i] = random.randint(0, 736)
+            enemyY[i] = random.randint(50, 150)
+
+        enemy(enemyX[i], enemyY[i], i)
+
+        collision3 = isCollision3(enemyX[i], enemyY[i], upgraded_bullet3X, upgraded_bullet3Y)
+        if collision3:
+            explosionSound = mixer.Sound("explosion.wav")
+            explosionSound.play()
+            bulletY = 480
+            upgraded_bullet2Y = 480
+            upgraded_bullet3Y = 480
+            bullet_state = "ready"
+            score_value += 1
+            
+            if score_value == 10:
+                spawnElites()
+                
+            elif score_value == 20:
+                spawnElites()
+
+            elif score_value == 30:
                 spawnElites()
             
             enemyX[i] = random.randint(0, 736)
@@ -226,6 +333,8 @@ while running:
             explosionSound = mixer.Sound("explosion.wav")
             explosionSound.play()
             bulletY = 480
+            upgraded_bullet2Y = 480
+            upgraded_bullet3Y = 480
             bullet_state = "ready"
             elites_current_hits[i] += 1
             print(elites_current_hits)
@@ -234,23 +343,83 @@ while running:
                 score_value += 1
                 elitesX[i] = random.randint(0, 736)
                 elitesY[i] = random.randint(50, 150)
-                if score_value == 3:
+                if score_value == 10:
                     spawnElites()
-                elif score_value == 6:
+                
+                elif score_value == 20:
                     spawnElites()
-            
-            
 
+                elif score_value == 30:
+                    spawnElites()
+            
         elites(elitesX[i], elitesY[i], i)
+
+        collision2 = isCollision2(enemyX[i], enemyY[i], upgraded_bullet2X, upgraded_bullet2Y)
+        if collision2:
+            explosionSound = mixer.Sound("explosion.wav")
+            explosionSound.play()
+            bulletY = 480
+            upgraded_bullet2Y = 480
+            upgraded_bullet3Y = 480
+            bullet_state = "ready"
+            score_value += 1
+            
+            if score_value == 10:
+                spawnElites()
+                
+            elif score_value == 20:
+                spawnElites()
+
+            elif score_value == 30:
+                spawnElites()
+            
+            enemyX[i] = random.randint(0, 736)
+            enemyY[i] = random.randint(50, 150)
+
+        enemy(enemyX[i], enemyY[i], i)
+
+        collision3 = isCollision3(enemyX[i], enemyY[i], upgraded_bullet3X, upgraded_bullet3Y)
+        if collision3:
+            explosionSound = mixer.Sound("explosion.wav")
+            explosionSound.play()
+            bulletY = 480
+            upgraded_bullet2Y = 480
+            upgraded_bullet3Y = 480
+            bullet_state = "ready"
+            score_value += 1
+            
+            if score_value == 10:
+                spawnElites()
+                
+            elif score_value == 20:
+                spawnElites()
+
+            elif score_value == 30:
+                spawnElites()
+            
+            enemyX[i] = random.randint(0, 736)
+            enemyY[i] = random.randint(50, 150)
+
+        enemy(enemyX[i], enemyY[i], i)
 
     # Bullet Movement
     if bulletY <= 0:
         bulletY = 480
+        upgraded_bullet2Y = 480
+        upgraded_bullet3Y = 480
         bullet_state = "ready"
 
+        
+
     if bullet_state is "fire":
-        fire_bullet(bulletX, bulletY)
-        bulletY -= bulletY_change
+        if bullet_upgrade == True:
+            multi_bullet(bulletX, bulletY, upgraded_bullet2X, upgraded_bullet2Y, upgraded_bullet3X, upgraded_bullet3Y)
+            bulletY -= bulletY_change
+            upgraded_bullet2Y -= upgraded_bullet2Y_change
+            upgraded_bullet3Y -= upgraded_bullet3Y_change
+        else:   
+            fire_bullet(bulletX, bulletY)
+            bulletY -= bulletY_change
 
     player(playerX, playerY)
     show_score(textX, testY)
