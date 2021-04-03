@@ -4,6 +4,9 @@ import time
 import pygame
 from pygame import mixer
 
+#Credit to attreyabhatt for the base space invaders code
+# https://github.com/attreyabhatt/Space-Invaders-Pygame
+
 # Intialize the pygame
 pygame.init()
 
@@ -301,16 +304,16 @@ while running:
             bullet_state = "ready"
             score_value += 1
             
-            if score_value == 1:
+            if score_value == 5:
                 spawnElites()
                 
-            elif score_value == 2:
+            elif score_value == 10:
                 spawnElites()
             
-            elif score_value == 3:
+            elif score_value == 12:
                 upgrade()
 
-            elif score_value == 4:
+            elif score_value == 15:
                 spawnBoss()
             
             enemyX[i] = random.randint(0, 736)
@@ -407,16 +410,16 @@ while running:
                 score_value += 1
                 elitesX[i] = random.randint(0, 736)
                 elitesY[i] = random.randint(50, 150)
-                if score_value == 1:
+                if score_value == 5:
                     spawnElites()
                 
-                elif score_value == 2:
+                elif score_value == 10:
                     spawnElites()
             
-                elif score_value == 3:
+                elif score_value == 12:
                     upgrade()
 
-                elif score_value == 4:
+                elif score_value == 15:
                     spawnBoss()
             
         elites(elitesX[i], elitesY[i], i)
